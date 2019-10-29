@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset=" UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>Document</title>
+</head>
+
+<body>
+    <h3>Socket Test</h3>
+    <input type="text" name="" id="sendText">
+    <button id="sendBtn">发送</button>
+    <div id="recive"></div>
+    <script>
+        // 和服务器间创建socket 链接
+        let ws = new WebSocket("ws://localhost:2333/");
+
+        // 监听链接打开事件，此时可以发送消息到服务器
+        ws.onopen = function () {
+            console.log("ws open 链接打开了");
+            newTxt("Connect Server(链接到服务器)")
+        }
+
+        // 监听服务器返回消息事件，并做出相应的处理
+        ws.onmessage = function (e) {
+            console.log(e)
+            // document.getElementById("recive").innerHTML = e.data;
+            newTxt(e.data, "服务端返回消息: ")
+        }
+
+        // 监听链接关闭事件
+        ws.close = function () {
+            console.log("与服务端的链接关闭了")
+            newTxt("与服务端的链接关闭了")
+        }
+
+        // 在socket 链接发生错误时触发
+        ws.onerror = function () {
+            console.log("发生错误");
+        }
+
+
+        // 
+        let txt = document.getElementById('sendText');
+        txt.addEventListener('keyup', function (e) {
+            console.log(txt.value.trim() === '')
+            if (txt.value.trim() === '' || e.keyCode !== 13) return console.log('不发送消息！');
+
+            // 输出客户端发送的消息
+            newTxt(txt.value, "客户端发送的消息: ")
+            ws.send(txt.value);
+        })
+
+
+        // 为发送按钮绑定事件，点击后向服务器发送消息
+        document.getElementById("sendBtn").addEventListener('click', function (e) {
+            if (txt.value.trim() === '') return txt.focus();
+
+            // 输出客户端发送的消息
+            newTxt(txt.value, "客户端发送的消息: ")
+            ws.send(txt.value);
+
+            // 清空输入框，并聚焦
+            txt.value = '';
+            txt.focus();
+        })
+
+        // 创建 p 并插入到 recive 中
+        function newTxt(content, type = "") {
+            let p = document.createElement("p");
+            p.innerHTML = type + content;
+            document.getElementById("recive").appendChild(p);
+        }
+    </script>
+</body>
+
+</html>

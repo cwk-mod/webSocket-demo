@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset=" UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <h3>Socket Test</h3>
+    <input type="text" name="" id="sendText">
+    <button id="sendBtn">发送</button>
+    <div id="recive"></div>
+    <script>
+        // 和服务器间创建socket 链接
+        let ws = new WebSocket("ws://localhost:5777/");
+
+        ws.onopen = function () {
+            console.log("打开链接")
+            document.getElementById("sendBtn").addEventListener("click", function () {
+                let txt = document.getElementById("sendText").value
+                if (txt) {
+                    ws.send(txt)
+                }
+            })
+        }
+
+        ws.close = function () {
+            console.log("关闭连接")
+        }
+
+        ws.onmessage = function (e) {
+            console.log(e.data)
+            showMessage(e.data)
+        }
+
+
+        function showMessage(str) {
+            let div = document.createElement("div")
+            div.innerHTML = str
+            document.body.appendChild(div)
+        }
+
+
+    </script>
+</body>
+
+</html>
